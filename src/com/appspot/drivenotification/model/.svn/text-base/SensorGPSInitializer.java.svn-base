@@ -1,0 +1,62 @@
+package com.google.android.gcm.demo.server.model;
+
+import java.util.logging.Logger;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+
+public class SensorGPSInitializer implements ServletContextListener{
+
+	//public static final String ATTRIBUTE_ACCESS_KEY = "AIzaSyC66TyavENDCq33C7vrSEHDHu7iW3nTsxs";
+	
+	private static final String ENTITY_KIND = "SensorGPS";
+	private static final String ENTITY_KEY = "Sensor";
+	private static final String ACCESS_KEY_FIELD_SENSOR_ID = "sensor_id";
+	private static final String ACCESS_KEY_FIELD_LATITUDE = "latitude";
+	private static final String ACCESS_KEY_FIELD_LONGITUDE = "longitude";
+
+	private final Logger logger = Logger.getLogger(getClass().getName());
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
+		// TODO Auto-generated method stub
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+	    Key key = KeyFactory.createKey(ENTITY_KIND, ENTITY_KEY);
+
+	    Entity entity;
+	    try {
+	      entity = datastore.get(key);
+	    } catch (EntityNotFoundException e) {
+	      entity = new Entity(key);
+	      // NOTE: it's not possible to change entities in the local server, so
+	      // it will be necessary to hardcode the API key below if you are running
+	      // it locally.
+	      entity.setProperty(ACCESS_KEY_FIELD_SENSOR_ID, "set_id_here");
+	      entity.setProperty(ACCESS_KEY_FIELD_LATITUDE,
+	          "replace_with_sensor_latitude");
+	      entity.setProperty(ACCESS_KEY_FIELD_LONGITUDE, 
+	    		  "replace_with_sensor_longitude");
+	      datastore.put(entity);
+//	      logger.severe("Created fake key. Please go to App Engine admin "
+//	          + "console, change its value to your API Key (the entity "
+//	          + "type is '" + ENTITY_KIND + "' and its field to be changed is '"
+//	          + ACCESS_KEY_FIELD + "'), then restart the server!");
+	    }
+//	    String accessKey = (String) entity.getProperty(ACCESS_KEY_FIELD_LATITUDE);
+//	    event.getServletContext().setAttribute(ATTRIBUTE_ACCESS_KEY, accessKey);
+	  
+	}
+
+}
